@@ -18,4 +18,6 @@ Route::middleware('auth:sanctum')->prefix('v1')->group(function () {
     Route::get('loans', [LoanController::class, 'index']);
     Route::post('loans', [LoanController::class, 'store']);
     Route::post('loans/{loan}/return', ReturnLoanController::class);
+
+    // Hola, Soy Chris!! 
 });
