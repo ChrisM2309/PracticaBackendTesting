@@ -36,7 +36,7 @@ class BookPolicy
      */
     public function update(User $user, Book $book): bool
     {
-        return true;
+        return $user->hasRole('bibliotecario');
     }
 
     /**
