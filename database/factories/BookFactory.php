@@ -23,7 +23,6 @@ class BookFactory extends Factory
             'total_copies' => $this->faker->numberBetween(5,10),
             'available_copies' => $this->faker->numberBetween(1,5),
             'is_available' => $this->faker->boolean(),
-
         ];
     }
 }

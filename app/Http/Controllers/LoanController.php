@@ -7,15 +7,26 @@ use App\Http\Resources\LoanResource;
 use App\Models\Book;
 use App\Models\Loan;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class LoanController extends Controller
 {
+    public function __construct()
+    {
+        $this->authorizeResource(Loan::class, 'loan');
+    }
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $loans = Loan::with('book')->paginate();
+        $query = Loan::with('book');
+
+        if (! $request->user()->hasRole('bibliotecario')) {
+            $query->where('user_id', $request->user()->id);
+        }
+
+        $loans = $query->paginate();
 
         return response()->json(LoanResource::collection($loans));
     }
@@ -31,41 +42,20 @@ class LoanController extends Controller
             return response()->json(['message' => 'Book is not available'], 422);
         }
 
-        $loan = Loan::create([
-            'requester_name' => $request->input('requester_name'),
-            'book_id' => $request->input('book_id'),
-        ]);
+        $loan = DB::transaction(function () use ($book, $request) {
+            $newLoan = Loan::create([
+                'book_id' => $book->id,
+                'user_id' => $request->user()->id,
+            ]);
+            
+            $book->update([
+                'available_copies' => $book->available_copies - 1,
+                'is_available' => $book->available_copies - 1 > 0,
+            ]);
 
-        $book->update([
-            'available_copies' => $book->available_copies - 1,
-            'is_available' => $book->available_copies - 1 > 0,
-        ]);
+            return $newLoan;
+        });
 
         return response()->json($loan, 201);
-
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
-    }
+    }    
 }
