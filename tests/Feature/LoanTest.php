@@ -97,8 +97,8 @@ class LoanTest extends TestCase
 
         $book = Book::factory()->create([
             'is_available' => true,
-            'total_copies' => 5,
-            'available_copies' => 5,
+            'total_copies' => 2,
+            'available_copies' => 2,
         ]);
 
         $response = $this->postJson('/api/v1/loans', [
@@ -116,7 +116,7 @@ class LoanTest extends TestCase
 
         $this->assertDatabaseHas('books', [
             'id' => $book->id,
-            'available_copies' => 4,
+            'available_copies' => 1,
         ]);
     }
 
@@ -128,8 +128,8 @@ class LoanTest extends TestCase
 
         $book = Book::factory()->create([
             'is_available' => true,
-            'total_copies' => 3,
-            'available_copies' => 3,
+            'total_copies' => 2,
+            'available_copies' => 2,
         ]);
 
         $response = $this->postJson('/api/v1/loans', [
@@ -153,7 +153,7 @@ class LoanTest extends TestCase
 
         $book = Book::factory()->create([
             'is_available' => true,
-            'available_copies' => 3,
+            'available_copies' => 2,
         ]);
 
         $response = $this->postJson('/api/v1/loans', [

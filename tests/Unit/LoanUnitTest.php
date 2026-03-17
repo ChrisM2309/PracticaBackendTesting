@@ -133,8 +133,8 @@ class LoanUnitTest extends TestCase
 
     public function test_loan_resource_retorna_estructura_correcta(): void
     {
-        $user = User::factory()->create(['name' => 'Juan Perez']);
-        $book = Book::factory()->create(['title' => 'Clean Code']);
+        $user = User::factory()->create(['name' => 'Cristiano Ronaldo']);
+        $book = Book::factory()->create(['title' => 'GOAT']);
         $loan = Loan::factory()->create([
             'book_id' => $book->id,
             'user_id' => $user->id,
@@ -145,7 +145,7 @@ class LoanUnitTest extends TestCase
         $array = (new LoanResource($loan))->toArray(new Request());
 
         $this->assertSame($loan->id, $array['id']);
-        $this->assertSame('Juan Perez', $array['requester_name']);
+        $this->assertSame('Cristiano Ronaldo', $array['requester_name']);
         $this->assertTrue($array['is_active']);
         $this->assertNull($array['return_at']);
     }
