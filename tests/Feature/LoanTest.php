@@ -197,10 +197,14 @@ class LoanTest extends TestCase
             'available_copies' => 1,
         ]);
 
-        $this->postJson('/api/v1/loans', [
+        $response = $this->postJson('/api/v1/loans', [
             'book_id' => $book->id,
             'user_id' => $estudiante->id,
         ]);
+
+        $response->dump(); // o dumpHeaders(), dumpSession()
+
+        $response->assertStatus(201);
 
         $this->assertDatabaseHas('books', [
             'id' => $book->id,
