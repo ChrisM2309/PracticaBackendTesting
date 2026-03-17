@@ -14,7 +14,6 @@ class BookController extends Controller
 
     public function index(Request $request)
     {
-        $this->authorize('viewAny', Book::class);
         $books = Book::when($request->has('title'), function ($query) use ($request) {
             $query->where('title', 'like', '%'.$request->input('title').'%');
         })->when($request->has('isbn'), function ($query) use ($request) {
@@ -24,7 +23,7 @@ class BookController extends Controller
         })
             ->paginate();
 
-        return response()->json(BookResource::collection($books));
+        return BookResource::collection($books);
     }
 
     public function show(Book $book){
@@ -35,7 +34,7 @@ class BookController extends Controller
     public function store(Request $request) {
         $validated = $request->validate([
             'title' => ['required', 'string', 'max:255'],
-            'author' => ['required', 'string', 'max:1000'],
+            'description' => ['required', 'string', 'max:1000'],
             'ISBN' => ['required', 'string', 'max:255', 'unique:books,ISBN'],
             'total_copies' => ['required', 'integer', 'min:1'],
             'available_copies' => ['required', 'integer', 'min:0', 'lte:total_copies'],
@@ -74,14 +73,16 @@ class BookController extends Controller
     }
 
 
-    // destroy
-    public function destroy(Book $book) {
-
-        if($book->loans()->whereNull('returned_at')->exists()) {
-            return response()->json(['message' => 'No se puede eliminar el libro porque tiene préstamos activos'], 422);
+    public function destroy(Book $book) 
+    {
+        if($book->loans()->whereNull('return_at')->exists()) {
+            return response()->json([
+                'message' => 'No se puede eliminar el libro'
+            ], 422);
         }
 
         $book->delete();
+
         return response()->json(['message' => 'Libro eliminado correctamente']);
     }
 }

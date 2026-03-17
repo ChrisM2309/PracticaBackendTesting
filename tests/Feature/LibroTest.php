@@ -143,7 +143,7 @@ class LibroTest extends TestCase
         $response = $this->deleteJson("/api/v1/books/{$book->id}");
 
         $response->assertStatus(200)
-            ->assertJsonPath('message', 'Book deleted successfully');
+            ->assertJsonPath('message', 'Libro eliminado correctamente');
 
         $this->assertDatabaseMissing('books', ['id' => $book->id]);
     }
@@ -166,6 +166,6 @@ class LibroTest extends TestCase
         $response = $this->deleteJson("/api/v1/books/{$book->id}");
 
         $response->assertStatus(422)
-            ->assertJsonPath('message', 'Cannot delete a book with active loans');
+            ->assertJsonPath('message', 'No se puede eliminar el libro');
     }
 }
