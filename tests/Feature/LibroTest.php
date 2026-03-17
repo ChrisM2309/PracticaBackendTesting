@@ -48,7 +48,7 @@ class LibroTest extends TestCase
         Sanctum::actingAs($user);
 
         $book = Book::factory()->create([
-            'title' => 'Clean Code',
+            'title' => 'Historia del Real Madrid',
             'is_available' => true,
         ]);
 
@@ -56,7 +56,7 @@ class LibroTest extends TestCase
 
         $response->assertStatus(200)
             ->assertJsonPath('data.id', $book->id)
-            ->assertJsonPath('data.title', 'Clean Code')
+            ->assertJsonPath('data.title', 'Historia del Real Madrid')
             ->assertJsonPath('data.is_available', 'Disponible');
     }
 
@@ -67,21 +67,21 @@ class LibroTest extends TestCase
         Sanctum::actingAs($bibliotecario);
 
         $payload = [
-            'title' => 'Domain-Driven Design',
-            'description' => 'Libro de diseño de software',
-            'ISBN' => '9780321125217',
-            'total_copies' => 5,
-            'available_copies' => 5,
+            'title' => 'Historia del Real Madrid',
+            'description' => 'Historia del mejor club de la historia del fútbol',
+            'ISBN' => '9988642245436',
+            'total_copies' => 2,
+            'available_copies' => 2,
         ];
 
         $response = $this->postJson('/api/v1/books', $payload);
 
         $response->assertStatus(201)
-            ->assertJsonPath('data.title', 'Domain-Driven Design');
+            ->assertJsonPath('data.title', 'Historia del Real Madrid');
 
         $this->assertDatabaseHas('books', [
-            'title' => 'Domain-Driven Design',
-            'ISBN' => '9780321125217',
+            'title' => 'Historia del Real Madrid',
+            'ISBN' => '9988642245436',
         ]);
     }
 
@@ -109,26 +109,26 @@ class LibroTest extends TestCase
         Sanctum::actingAs($bibliotecario);
 
         $book = Book::factory()->create([
-            'title' => 'Antes',
-            'total_copies' => 4,
-            'available_copies' => 2,
+            'title' => 'Historia del Real Madrid',
+            'total_copies' => 2,
+            'available_copies' => 1,
             'is_available' => true,
         ]);
 
         $response = $this->putJson("/api/v1/books/{$book->id}", [
-            'title' => 'Despues',
-            'total_copies' => 6,
-            'available_copies' => 1,
+            'title' => 'Futbol',
+            'total_copies' => 4,
+            'available_copies' => 2,
         ]);
 
         $response->assertStatus(200)
-            ->assertJsonPath('data.title', 'Despues');
+            ->assertJsonPath('data.title', 'Futbol');
 
         $this->assertDatabaseHas('books', [
             'id' => $book->id,
-            'title' => 'Despues',
-            'total_copies' => 6,
-            'available_copies' => 1,
+            'title' => 'Futbol',
+            'total_copies' => 4,
+            'available_copies' => 2,
         ]);
     }
 
